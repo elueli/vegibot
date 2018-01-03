@@ -37,7 +37,9 @@ if (str_detect(tolower(menu.vegi), "vegan") == TRUE) {
 }
 
 #trim menu
-menu.vegi <- str_replace_all(menu.vegi, "\n|natürlich vegi|CHF 6.60 / 12.60", " ")
+menu.vegi <- str_replace_all(menu.vegi, "\n", " ")
+menu.vegi <- str_replace_all(menu.vegi, "«natürlich vegi»", " ")
+menu.vegi <- str_replace_all(menu.vegi, "CHF 6.60 / 12.60 | CHF 6.60 / CHF 12.60", " ")
 menu.vegi <- str_replace(menu.vegi, "[^\\s]*(VEGAN)[^\\s]*", "") 
 menu.vegi <- str_trim(menu.vegi, "both")
 
