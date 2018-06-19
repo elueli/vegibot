@@ -2,7 +2,8 @@
 # Vegibot @ vonRou #
 ####################
 
-#inspired by this tutorial: http://www.r-datacollection.com/blog/Programming-a-Twitter-bot/
+#a piece of code by Ueli Reber (@el_ueli)
+#inspired by this great tutorial: http://www.r-datacollection.com/blog/Programming-a-Twitter-bot/
 
 library(rvest)
 library(stringr)
@@ -31,7 +32,8 @@ menu.vegi <- str_replace(menu.vegi, "\n&", " &")
 menu.vegi <- str_replace_all(menu.vegi, "(?<=[:alpha:])\\n(?=[:alpha:])", ", ")
 menu.vegi <- str_replace_all(menu.vegi, "\n", "")
 menu.vegi <- str_replace_all(menu.vegi, "natürlich vegi", "")
-menu.vegi <- str_replace_all(menu.vegi, "\\CHF(.*)", " ")
+menu.vegi <- str_replace_all(menu.vegi, "[^\\s]*(VEGAN)[^\\s]*", "")
+menu.vegi <- str_replace_all(menu.vegi, "\\CHF(.*)", "")
 menu.vegi <- str_trim(menu.vegi, "both")
 menu.vegi <- str_replace_all(menu.vegi, "  ", " ")
 
