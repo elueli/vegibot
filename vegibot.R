@@ -12,9 +12,13 @@ library(twitteR)
 #harvest today's menu from the mensa's website
 menu <- read_html(paste0("http://zfv.ch/de/microsites/mensa-und-cafeteria-vonroll/menuplan#", Sys.Date()))
 
-#get today's menu
+#extract today's menu
 menu.today <- menu %>%
   html_nodes(paste0("[data-date='", Sys.Date(), "']"))
+
+#extract nutritional information
+menu.facts <- menu.today[[2]] %>% html_nodes(".info-list") %>% xml_nodes("span") %>% xml_text()
+menu.facts.meat <- menu.today[[3]] %>% html_nodes(".info-list") %>% xml_nodes("span") %>% xml_text()
 
 #check if menu is vegan
 if (str_detect(as.character(html_children(menu.today[2])[1]), "vegan") == TRUE) {
@@ -23,7 +27,7 @@ if (str_detect(as.character(html_children(menu.today[2])[1]), "vegan") == TRUE) 
   vegan <- 0
 }
 
-#select the vegi menu
+#extract the vegi menu
 menu.vegi <- html_text(menu.today[2])
 
 #trim menu
@@ -60,6 +64,18 @@ setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 tweet(text)
 
 #save today's menu to the log file
-log.df <- data.frame(date = Sys.Date(), vegan = vegan, pacman = NA, menu = menu.vegi, tweet = text)
+log.df <- data.frame(date = Sys.Date(),
+                     day = format(Sys.Date(), "%A"),
+                     vegan = vegan,
+                     calories = menu.facts[2],
+                     fat = menu.facts[3],
+                     carbs = menu.facts[4],
+                     proteins = menu.facts[5],
+                     menu = menu.vegi,
+                     tweet = text,
+                     meat_calories = menu.facts.meat[2],
+                     meat_fat = menu.facts.meat[3],
+                     meat_carbs = menu.facts.meat[4],
+                     menu_proteins = menu.facts.meat[5])
 
 write.table(log.df, file = "menu_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ";")
